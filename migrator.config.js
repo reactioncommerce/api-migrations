@@ -1,3 +1,9 @@
 export default {
-  tracks: []
+  tracks: [
+    {
+      namespace: "legacy-authorization",
+      path: "./migrations/index.js",
+      version: 2
+    }
+  ]
 };

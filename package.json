@@ -1,12 +1,12 @@
 {
-  "name": "migrations",
+  "name": "reaction-api-migrations",
   "version": "0.0.0",
   "type": "module",
-  "description": "Tracks migration state for Reaction Platform",
+  "description": "Tracks migration state for all Reaction Platform services",
   "author": "Reaction Commerce <hello@reactioncommerce.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@reactioncommerce/migrator": "^1.0.0"
+    "@reactioncommerce/migrator": "0.0.0-development"
   },
   "devDependencies": {}
 }
