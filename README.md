@@ -20,13 +20,23 @@ This repo was created by following [these instructions](https://github.com/react
 
 ## Migrating Deployment Databases
 
-You can follow "Local Development Usage" and specify a remote database if you want. Migrations will run on your computer, which may not be very fast or reliable.
+Option 1: You can follow the above "Local Development Usage" instructions but specify a remote database if you want. Migrations will run on your computer, which may not be very fast or reliable.
 
-Instead, you can set up a CI task for this repo.
+Option 2: You can set up a CI task for this repo:
 
 1. Create different configuration files for each deployed environment. For example, `migrator.config-staging.js` for the "staging" environment.
 2. Add the necessary `MONGO_URL`s to your CI environment/secrets.
-3. When config file changes are merged to the main branch, run `migrator migrate <env> -y` as a CI task with `MONGO_URL` set to the correct database for that environment.
+3. When config file changes are merged to the main branch, run `migrator migrate <env> -y` as a CI task with `MONGO_URL` set to the correct database for that environment. Do this for each Reaction environment (database) you have.
+
+## Why does this repo exist?
+
+This repo serves a few purposes:
+- A place to `npm install` the [@reactioncommerce/migrator](https://github.com/reactioncommerce/migrator) package and all packages that contain migrations
+- A central place to capture the desired/required data version for each release of the Reaction system, and for each individual Reaction component
+
+In some monolith apps that you may be familiar with, the app's codebase repo serves as the place for migrations, too. But there are at least two reasons why we can't do that with Reaction:
+- Reaction consists of many plugins and microservices, each of which owns their own data versioning. Running migrations in 10 different places would not be a good user experience.
+- When you check out a particular release of a Reaction API component, you don't have any of the `down` migrations from future releases available. To run `down` migrations, you always need the latest migration code.
 
 ## License
 Copyright 2020 Reaction Commerce
