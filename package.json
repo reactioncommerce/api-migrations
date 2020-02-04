@@ -6,7 +6,9 @@
   "author": "Reaction Commerce <hello@reactioncommerce.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@reactioncommerce/migrator": "0.0.0-development"
+    "@reactioncommerce/migrator": "0.0.0-development",
+    "@reactioncommerce/random": "^1.0.2",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {}
 }
