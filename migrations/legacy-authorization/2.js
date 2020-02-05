@@ -273,11 +273,14 @@ async function up({ db, progress }) {
   // check to see if new `accounts-manager` and `system-manager` groups exist
   // create them if they don't
   let newGroups = [];
+  let accountsManagerGroupId;
+  let systemManagerGroupId;
   if (!groups.find((group) => group.slug === "accounts-manager")) {
+    accountsManagerGroupId = Random.id();
     const currentDate = Date();
     newGroups.push(
       {
-        _id: Random.id(),
+        _id: accountsManagerGroupId,
         createdAt: currentDate,
         updatedAt: currentDate,
         name: "accounts manager",
@@ -301,10 +304,11 @@ async function up({ db, progress }) {
   }
 
   if (!groups.find((group) => group.slug === "system-manager")) {
+    systemManagerGroupId = Random.id();
     const currentDate = Date();
     newGroups.push(
       {
-        _id: Random.id(),
+        _id: systemManagerGroupId,
         createdAt: currentDate,
         updatedAt: currentDate,
         name: "system manager",
@@ -320,7 +324,7 @@ async function up({ db, progress }) {
           "reaction:legacy:accounts/update:address-books",
           "reaction:legacy:accounts/update:currency",
           "reaction:legacy:accounts/update:language",
-          "reaction:legacy:accounts/read:admin-accounts"
+          "reaction:legacy:accounts/read:admin-accounts",
           "reaction:legacy:shops/create"
         ],
         shopId: null
@@ -330,6 +334,38 @@ async function up({ db, progress }) {
 
   if (newGroups.length) {
     await db.collection("Groups").insertMany(newGroups);
+
+    // if we created the new groups, we need to update users who previously held `owner` and `admin` roles
+    // to be a part of the new groups
+    // 1. find all accounts that are NOT in the `customer` group, this will return only admins
+    const customerGroup = groups.find((group) => group.slug === "customer") || {};
+    const accounts = await db.collection("Accounts").find({ groups: { $nin: [customerGroup._id] } }).toArray();
+    // 2. find each user, and see their admin status
+    accounts.forEach(async (account) => {
+      progress("percent");
+      let groups = account.groups;
+      const user = await db.collection("users").findOne({ _id: account.userId });
+      if (!user || !user.roles) return;
+
+      // if user had global roles, check to see if they shoud be
+      if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("owner")) {
+        groups.push(systemManagerGroupId);
+      };
+
+      // if user was global "owner", make them part of the `system-manager` group
+      if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("admin")) {
+        groups.push(accountsManagerGroupId);
+      };
+
+      await db.collection("Accounts").updateOne(
+        { _id: account._id },
+        {
+          $set: {
+            groups
+          }
+        }
+      );
+    });
   }
 }
 
