@@ -238,7 +238,8 @@ async function up({ db, progress }) {
 
   if (groups && Array.isArray(groups)) {
     // loop over each group
-    groups.forEach((group) => {
+    groups.forEach((group, index) => {
+      progress(Math.floor((((index + 1) / groups.length) / 2) * 100));
       const newPermissions = group.permissions;
       // loop over all permissions in a group, find legacy permissions, and update them to the new permissions
       group.permissions.forEach((permission) => {
@@ -341,21 +342,25 @@ async function up({ db, progress }) {
     const customerGroup = groups.find((group) => group.slug === "customer") || {};
     const accounts = await db.collection("Accounts").find({ groups: { $nin: [customerGroup._id] } }).toArray();
     // 2. find each user, and see their admin status
-    accounts.forEach(async (account) => {
-      progress("percent");
+    accounts.forEach(async (account, index) => {
+      progress(Math.floor((((index + 1) / accounts.length) / 2) * 100) + 50);
       let groups = account.groups;
       const user = await db.collection("users").findOne({ _id: account.userId });
       if (!user || !user.roles) return;
 
-      // if user had global roles, check to see if they shoud be
+      // if user was global "owner", make them part of the `system-manager` group
+      // else if user was global "admin", make them part of the `accounts-manager` group
+      // else if user was `owner` or `admin` of the primary shop, make them part of the `accounts-manager` group
       if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("owner")) {
         groups.push(systemManagerGroupId);
-      };
-
-      // if user was global "owner", make them part of the `system-manager` group
-      if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("admin")) {
+      } else if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("admin")) {
         groups.push(accountsManagerGroupId);
-      };
+      } else {
+        const primaryShop = db.collection("Shops").findOne({ shopType: "primary" })
+        if (user.roles[primaryShop._id] && user.roles[primaryShop._id].includes(["admin","owner"])) {
+          groups.push(accountsManagerGroupId);
+        }
+      }
 
       await db.collection("Accounts").updateOne(
         { _id: account._id },
@@ -366,6 +371,8 @@ async function up({ db, progress }) {
         }
       );
     });
+  } else {
+    progress(100);
   }
 }
 
