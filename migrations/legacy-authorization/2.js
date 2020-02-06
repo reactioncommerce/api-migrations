@@ -357,7 +357,7 @@ async function up({ db, progress }) {
         groups.push(accountsManagerGroupId);
       } else {
         const primaryShop = db.collection("Shops").findOne({ shopType: "primary" })
-        if (user.roles[primaryShop._id] && user.roles[primaryShop._id].includes(["admin","owner"])) {
+        if (user.roles[primaryShop._id] && user.roles[primaryShop._id].find((perm) => ["admin", "owner"].includes(perm)) {
           groups.push(accountsManagerGroupId);
         }
       }
