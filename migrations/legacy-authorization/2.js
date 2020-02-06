@@ -359,11 +359,11 @@ async function up({ db, progress }) {
       // if user was global "owner", make them part of the `system-manager` group
       // else if user was global "admin", make them part of the `accounts-manager` group
       // else if user was `owner` or `admin` of the primary shop, make them part of the `accounts-manager` group
-      if (user.roles.__global_roles__ && user.roles.__global_roles__.includes("owner")) {
+      if (user.roles.__global_roles__ && user.roles.__global_roles__.includes("owner") && systemManagerGroupId) {
         accountGroups.push(systemManagerGroupId);
-      } else if (user.roles.__global_roles__ && user.roles.__global_roles__.includes("admin")) {
+      } else if (user.roles.__global_roles__ && user.roles.__global_roles__.includes("admin") && accountsManagerGroupId) {
         accountGroups.push(accountsManagerGroupId);
-      } else {
+      } else if (accountsManagerGroupId) {
         const primaryShop = db.collection("Shops").findOne({ shopType: "primary" });
         if (user.roles[primaryShop._id] && user.roles[primaryShop._id].find((perm) => ["admin", "owner"].includes(perm))) {
           accountGroups.push(accountsManagerGroupId);
