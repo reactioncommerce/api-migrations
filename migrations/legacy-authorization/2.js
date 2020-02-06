@@ -1,6 +1,15 @@
+/* eslint-disable no-await-in-loop */
 import _ from "lodash";
 import Random from "@reactioncommerce/random";
 
+/**
+ * @summary Performs migration up from previous data version
+ * @param {Object} context Migration context
+ * @param {Object} context.db MongoDB `Db` instance
+ * @param {Function} context.progress A function to report progress, takes percent
+ *   number as argument.
+ * @return {undefined}
+ */
 async function up({ db, progress }) {
   const legacyShopPermissions = [
     "account/invite",
@@ -66,7 +75,7 @@ async function up({ db, progress }) {
     "media/create": [
       "reaction:legacy:mediaRecords/create:media"
     ],
-    "media/delete" : [
+    "media/delete": [
       "reaction:legacy:mediaRecords/delete:media"
     ],
     "media/update": [
@@ -238,7 +247,8 @@ async function up({ db, progress }) {
 
   if (groups && Array.isArray(groups)) {
     // loop over each group
-    groups.forEach((group, index) => {
+    for (let index = 0; index < groups.length; index += 1) {
+      const group = groups[index];
       const newPermissions = group.permissions;
       // loop over all permissions in a group, find legacy permissions, and update them to the new permissions
       group.permissions.forEach((permission) => {
@@ -260,7 +270,7 @@ async function up({ db, progress }) {
       const finalPermissions = uniqueNewPermissions.filter((permission) => !legacyShopPermissions.includes(permission) && permission !== null);
 
       // update Groups collection with new permissions
-      return db.collection("Groups").updateOne({
+      await db.collection("Groups").updateOne({
         _id: group._id
       }, {
         $set: {
@@ -269,69 +279,65 @@ async function up({ db, progress }) {
       });
 
       progress(Math.floor((((index + 1) / groups.length) / 2) * 100));
-    });
+    }
   }
 
   // check to see if new `accounts-manager` and `system-manager` groups exist
   // create them if they don't
-  let newGroups = [];
+  const newGroups = [];
   let accountsManagerGroupId;
   let systemManagerGroupId;
   if (!groups.find((group) => group.slug === "accounts-manager")) {
     accountsManagerGroupId = Random.id();
     const currentDate = Date();
-    newGroups.push(
-      {
-        _id: accountsManagerGroupId,
-        createdAt: currentDate,
-        updatedAt: currentDate,
-        name: "accounts manager",
-        slug: "accounts-manager",
-        permissions: [
-          "reaction:legacy:accounts/invite:group",
-          "reaction:legacy:accounts/add:emails",
-          "reaction:legacy:accounts/add:address-books",
-          "reaction:legacy:accounts/create",
-          "reaction:legacy:accounts/delete:emails",
-          "reaction:legacy:accounts/read",
-          "reaction:legacy:accounts/remove:address-books",
-          "reaction:legacy:accounts/update:address-books",
-          "reaction:legacy:accounts/update:currency",
-          "reaction:legacy:accounts/update:language",
-          "reaction:legacy:accounts/read:admin-accounts"
-        ],
-        shopId: null
-      }
-    )
+    newGroups.push({
+      _id: accountsManagerGroupId,
+      createdAt: currentDate,
+      updatedAt: currentDate,
+      name: "accounts manager",
+      slug: "accounts-manager",
+      permissions: [
+        "reaction:legacy:accounts/invite:group",
+        "reaction:legacy:accounts/add:emails",
+        "reaction:legacy:accounts/add:address-books",
+        "reaction:legacy:accounts/create",
+        "reaction:legacy:accounts/delete:emails",
+        "reaction:legacy:accounts/read",
+        "reaction:legacy:accounts/remove:address-books",
+        "reaction:legacy:accounts/update:address-books",
+        "reaction:legacy:accounts/update:currency",
+        "reaction:legacy:accounts/update:language",
+        "reaction:legacy:accounts/read:admin-accounts"
+      ],
+      shopId: null
+    });
   }
 
   if (!groups.find((group) => group.slug === "system-manager")) {
     systemManagerGroupId = Random.id();
     const currentDate = Date();
-    newGroups.push(
-      {
-        _id: systemManagerGroupId,
-        createdAt: currentDate,
-        updatedAt: currentDate,
-        name: "system manager",
-        slug: "system-manager",
-        permissions: [
-          "reaction:legacy:accounts/invite:group",
-          "reaction:legacy:accounts/add:emails",
-          "reaction:legacy:accounts/add:address-books",
-          "reaction:legacy:accounts/create",
-          "reaction:legacy:accounts/delete:emails",
-          "reaction:legacy:accounts/read",
-          "reaction:legacy:accounts/remove:address-books",
-          "reaction:legacy:accounts/update:address-books",
-          "reaction:legacy:accounts/update:currency",
-          "reaction:legacy:accounts/update:language",
-          "reaction:legacy:accounts/read:admin-accounts",
-          "reaction:legacy:shops/create"
-        ],
-        shopId: null
-      }
-    )
+    newGroups.push({
+      _id: systemManagerGroupId,
+      createdAt: currentDate,
+      updatedAt: currentDate,
+      name: "system manager",
+      slug: "system-manager",
+      permissions: [
+        "reaction:legacy:accounts/invite:group",
+        "reaction:legacy:accounts/add:emails",
+        "reaction:legacy:accounts/add:address-books",
+        "reaction:legacy:accounts/create",
+        "reaction:legacy:accounts/delete:emails",
+        "reaction:legacy:accounts/read",
+        "reaction:legacy:accounts/remove:address-books",
+        "reaction:legacy:accounts/update:address-books",
+        "reaction:legacy:accounts/update:currency",
+        "reaction:legacy:accounts/update:language",
+        "reaction:legacy:accounts/read:admin-accounts",
+        "reaction:legacy:shops/create"
+      ],
+      shopId: null
+    });
   }
 
   if (newGroups.length) {
@@ -342,23 +348,25 @@ async function up({ db, progress }) {
     // 1. find all accounts that are NOT in the `customer` group, this will return only admins
     const customerGroup = groups.find((group) => group.slug === "customer") || {};
     const accounts = await db.collection("Accounts").find({ groups: { $nin: [customerGroup._id] } }).toArray();
+
     // 2. find each user, and see their admin status
-    accounts.forEach(async (account, index) => {
-      let groups = account.groups;
+    for (let index = 0; index < accounts.length; index += 1) {
+      const account = accounts[index];
+      const accountGroups = account.groups;
       const user = await db.collection("users").findOne({ _id: account.userId });
       if (!user || !user.roles) return;
 
       // if user was global "owner", make them part of the `system-manager` group
       // else if user was global "admin", make them part of the `accounts-manager` group
       // else if user was `owner` or `admin` of the primary shop, make them part of the `accounts-manager` group
-      if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("owner")) {
-        groups.push(systemManagerGroupId);
-      } else if (user.roles["__global_roles__"] && user.roles["__global_roles__"].includes("admin")) {
-        groups.push(accountsManagerGroupId);
+      if (user.roles.__global_roles__ && user.roles.__global_roles__.includes("owner")) {
+        accountGroups.push(systemManagerGroupId);
+      } else if (user.roles.__global_roles__ && user.roles.__global_roles__.includes("admin")) {
+        accountGroups.push(accountsManagerGroupId);
       } else {
-        const primaryShop = db.collection("Shops").findOne({ shopType: "primary" })
-        if (user.roles[primaryShop._id] && user.roles[primaryShop._id].find((perm) => ["admin", "owner"].includes(perm)) {
-          groups.push(accountsManagerGroupId);
+        const primaryShop = db.collection("Shops").findOne({ shopType: "primary" });
+        if (user.roles[primaryShop._id] && user.roles[primaryShop._id].find((perm) => ["admin", "owner"].includes(perm))) {
+          accountGroups.push(accountsManagerGroupId);
         }
       }
 
@@ -366,13 +374,13 @@ async function up({ db, progress }) {
         { _id: account._id },
         {
           $set: {
-            groups
+            groups: accountGroups
           }
         }
       );
 
       progress(Math.floor((((index + 1) / accounts.length) / 2) * 100) + 50);
-    });
+    }
   } else {
     progress(100);
   }
