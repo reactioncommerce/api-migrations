@@ -239,7 +239,6 @@ async function up({ db, progress }) {
   if (groups && Array.isArray(groups)) {
     // loop over each group
     groups.forEach((group, index) => {
-      progress(Math.floor((((index + 1) / groups.length) / 2) * 100));
       const newPermissions = group.permissions;
       // loop over all permissions in a group, find legacy permissions, and update them to the new permissions
       group.permissions.forEach((permission) => {
@@ -268,6 +267,8 @@ async function up({ db, progress }) {
           permissions: finalPermissions
         }
       });
+
+      progress(Math.floor((((index + 1) / groups.length) / 2) * 100));
     });
   }
 
@@ -343,7 +344,6 @@ async function up({ db, progress }) {
     const accounts = await db.collection("Accounts").find({ groups: { $nin: [customerGroup._id] } }).toArray();
     // 2. find each user, and see their admin status
     accounts.forEach(async (account, index) => {
-      progress(Math.floor((((index + 1) / accounts.length) / 2) * 100) + 50);
       let groups = account.groups;
       const user = await db.collection("users").findOne({ _id: account.userId });
       if (!user || !user.roles) return;
@@ -370,6 +370,8 @@ async function up({ db, progress }) {
           }
         }
       );
+
+      progress(Math.floor((((index + 1) / accounts.length) / 2) * 100) + 50);
     });
   } else {
     progress(100);
