@@ -17,12 +17,12 @@ You must either have NodeJS 12.14.1 installed globally, or have [nvm](https://gi
 5. Then to see a report of necessary migrations for your local MongoDB database and optionally run them:
 
     ```sh
-    MONGO_URL=mongodb://localhost:27017/reaction migrator migrate
+    MONGO_URL=mongodb://localhost:27017/reaction npx migrator migrate
     ```
 
     Use a different `MONGO_URL` to run them on a different database.
 
-    Refer to [https://github.com/reactioncommerce/migrator](https://github.com/reactioncommerce/migrator) docs for other commands.
+    Refer to [https://github.com/reactioncommerce/migrator](https://github.com/reactioncommerce/migrator) docs for other commands. Prefix them with `npx`.
 6. Change the versions or add/remove tracks in `migrator.config.js` as necessary based on whatever API plugins you use.
 
 ## Migrating Deployment Databases
@@ -33,7 +33,7 @@ Option 2: You can set up a CI task for this repo:
 
 1. Create different configuration files for each deployed environment. For example, `migrator.config-staging.js` for the "staging" environment.
 2. Add the necessary `MONGO_URL`s to your CI environment/secrets.
-3. When config file changes are merged to the main branch, run `migrator migrate <env> -y` as a CI task with `MONGO_URL` set to the correct database for that environment. Do this for each Reaction environment (database) you have.
+3. When config file changes are merged to the main branch, run `npx migrator migrate <env> -y` as a CI task with `MONGO_URL` set to the correct database for that environment. Do this for each Reaction environment (database) you have.
     - Ensure that your CI Docker image uses at least the version of Node that's in the `.nvmrc` file.
 
 ## Why does this repo exist?
