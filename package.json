@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reactioncommerce/migrator": "^1.0.1",
+    "@reactioncommerce/plugin-simple-authorization": "^1.0.0",
     "@reactioncommerce/random": "^1.0.2",
     "lodash": "^4.17.15"
   },
