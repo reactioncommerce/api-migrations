@@ -1,8 +1,8 @@
 export default {
   tracks: [
     {
-      namespace: "legacy-authorization",
-      path: "./migrations/index.js",
+      namespace: "simple-authorization",
+      package: "@reactioncommerce/plugin-simple-authorization",
       version: 2
     }
   ]
