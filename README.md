@@ -11,7 +11,7 @@ You must either have NodeJS 12.14.1 installed globally, or have [nvm](https://gi
 ## Local Development Usage
 
 1. Fork/clone this repo.
-2. Check out the branch that corresponds to your version of Reaction Platform. (Only 3.0.0 and higher are supported.)
+2. Check out the [tag](https://github.com/reactioncommerce/api-migrations/tags) / [release](https://github.com/reactioncommerce/api-migrations/releases) that corresponds to your version of Reaction Platform. (Only 3.0.0 and higher are supported.)
 3. `nvm use` (If prompted, `nvm install` the correct version.)
 4. `npm install`
 5. Then to see a report of necessary migrations for your local MongoDB database and optionally run them:
