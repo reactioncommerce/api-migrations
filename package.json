@@ -9,7 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@reactioncommerce/migrator": "^1.0.1",
+    "@reactioncommerce/migrator": "^1.0.3",
     "@reactioncommerce/plugin-simple-authorization": "^1.0.2"
   },
   "devDependencies": {
