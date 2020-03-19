@@ -56,6 +56,8 @@ To add a migration to an API plugin package, there are four main steps:
 
 These steps are explained in more detail [here](https://github.com/reactioncommerce/migrator#how-to-publish-a-package-with-migrations), and you can look at the [simple-authorization](https://github.com/reactioncommerce/plugin-simple-authorization) plugin code for an example to follow.
 
+IMPORTANT: If the plugin you added a migration to is one that is built in to the stock Reaction API releases, then at the same time you bump the plugin package version in https://github.com/reactioncommerce/reaction `trunk` branch, you must also update the data version in the trunk branch of `migrator.config.js` in this repo.
+
 ## Developer Certificate of Origin
 We use the [Developer Certificate of Origin (DCO)](https://developercertificate.org/) in lieu of a Contributor License Agreement for all contributions to Reaction Commerce open source projects. We request that contributors agree to the terms of the DCO and indicate that agreement by signing-off all commits made to Reaction Commerce projects by adding a line with your name and email address to every Git commit message contributed:
 ```
