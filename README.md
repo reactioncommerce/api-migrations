@@ -23,7 +23,7 @@ You must either have NodeJS 12.14.1 installed globally, or have [nvm](https://gi
     Use a different `MONGO_URL` to run them on a different database.
 
     Refer to [https://github.com/reactioncommerce/migrator](https://github.com/reactioncommerce/migrator) docs for other commands. Prefix them with `npx`.
-6. Change the versions or add/remove tracks in `migrator.config.js` as necessary based on whatever API plugins you use.
+6. Try to start your API service. If there are database version errors thrown on startup, then change the versions or add/remove tracks in `migrator.config.js` as necessary based on whatever those errors are asking for. Then repeat the previous step. (If you've added new tracks, you'll need to `npm install` the latest version of those packages first.) Keep doing this until the API service starts.
 
 ## Migrating Deployment Databases
 
@@ -45,6 +45,18 @@ This repo serves a few purposes:
 In some monolith apps that you may be familiar with, the app's codebase repo serves as the place for migrations, too. But there are at least two reasons why we can't do that with Reaction:
 - Reaction consists of many plugins and microservices, each of which owns their own data versioning. Running migrations in 10 different places would not be a good user experience.
 - When you check out a particular release of a Reaction API component, you don't have any of the `down` migrations from future releases available. To run `down` migrations, you always need the latest migration code.
+
+## Adding a migration to an API plugin package
+To add a migration to an API plugin package, there are four main steps:
+
+1. Add the migration code in the plugin package, in a `migrations` folder alongside the `src` folder.
+2. Add `export { default as migrations } from "./migrations/index.js";` in your plugin entry point file.
+3. Add the latest version of the `@reactioncommerce/db-version-check` NPM package as a dependency.
+4. Add and register a `preStartup` function in the plugin source. In it, call `doesDatabaseVersionMatch` to prevent API startup if the data isn't compatible with the code.
+
+These steps are explained in more detail [here](https://github.com/reactioncommerce/migrator#how-to-publish-a-package-with-migrations), and you can look at the [simple-authorization](https://github.com/reactioncommerce/plugin-simple-authorization) plugin code for an example to follow.
+
+IMPORTANT: If the plugin you added a migration to is one that is built in to the stock Reaction API releases, then at the same time you bump the plugin package version in https://github.com/reactioncommerce/reaction `trunk` branch, you must also update the data version in the trunk branch of `migrator.config.js` in this repo.
 
 ## Developer Certificate of Origin
 We use the [Developer Certificate of Origin (DCO)](https://developercertificate.org/) in lieu of a Contributor License Agreement for all contributions to Reaction Commerce open source projects. We request that contributors agree to the terms of the DCO and indicate that agreement by signing-off all commits made to Reaction Commerce projects by adding a line with your name and email address to every Git commit message contributed:
