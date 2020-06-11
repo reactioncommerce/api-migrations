@@ -1,8 +1,8 @@
 export default {
   tracks: [
     {
-      namespace: "admin-ui",
-      path: "../reaction-3/@reactioncommerce/plugin-admin-ui/index.js",
+      namespace: "accounts",
+      package: "@reactioncommerce/api-plugin-accounts",
       version: 2
     },
     {
