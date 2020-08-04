@@ -7,8 +7,8 @@ export default {
     },
     {
       namespace: "simple-authorization",
-      package: "@reactioncommerce/plugin-simple-authorization",
-      version: 4
+      package: "@reactioncommerce/api-plugin-authorization-simple",
+      version: 5
     }
   ]
 };
