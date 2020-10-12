@@ -3,7 +3,7 @@ export default {
     {
       namespace: "accounts",
       package: "@reactioncommerce/api-plugin-accounts",
-      version: 2
+      version: 3
     },
     {
       namespace: "simple-authorization",
