@@ -11,12 +11,14 @@ RUN mkdir -p /usr/local/src/app && chown node:node /usr/local/src/app
 # Install latest NPM
 RUN npm install -g npm@latest
 
-COPY . /usr/local/src/app
-
 WORKDIR /usr/local/src/app
+
+COPY --chown=node:node ./ /usr/local/src/app
 
 RUN npm install
 
-USER root
+RUN chmod +x /usr/local/src/app/scripts/entrypoint.sh
 
+USER root
 ENTRYPOINT ["tini", "--", "/usr/local/src/app/scripts/entrypoint.sh"]
+LABEL com.reactioncommerce.name="reaction-api-migration"
