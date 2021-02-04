@@ -6,15 +6,13 @@ This repo was created by following [these instructions](https://github.com/react
 
 ## Prerequisites
 
-You must either have NodeJS 12.14.1 installed globally, or have [nvm](https://github.com/nvm-sh/nvm) installed and run `nvm use` as described in the instructions.
+You must have NodeJS 12.14.1 installed globally.
 
 ## Local Development Usage
 
 1. Fork/clone this repo.
-2. Check out the [tag](https://github.com/reactioncommerce/api-migrations/tags) that corresponds to your version of Reaction Platform. (Only 3.0.0 and higher are supported.)
-3. `nvm use` (If prompted, `nvm install` the correct version.)
-4. `npm install`
-5. Then to see a report of necessary migrations for your local MongoDB database and optionally run them:
+1. Check out the [tag](https://github.com/reactioncommerce/api-migrations/tags) that corresponds to your version of Reaction Platform. (Only 3.0.0 and higher are supported.)
+1. Then to see a report of necessary migrations for your local MongoDB database and optionally run them:
 
     ```sh
     MONGO_URL=mongodb://localhost:27017/reaction npx migrator migrate
@@ -23,7 +21,7 @@ You must either have NodeJS 12.14.1 installed globally, or have [nvm](https://gi
     Use a different `MONGO_URL` to run them on a different database.
 
     Refer to [https://github.com/reactioncommerce/migrator](https://github.com/reactioncommerce/migrator) docs for other commands. Prefix them with `npx`.
-6. Try to start your API service. If there are database version errors thrown on startup, then change the versions or add/remove tracks in `migrator.config.js` as necessary based on whatever those errors are asking for. Then repeat the previous step. (If you've added new tracks, you'll need to `npm install` the latest version of those packages first.) Keep doing this until the API service starts.
+1. Try to start your API service. If there are database version errors thrown on startup, then change the versions or add/remove tracks in `migrator.config.js` as necessary based on whatever those errors are asking for. Then repeat the previous step. (If you've added new tracks, you'll need to `npm install` the latest version of those packages first.) Keep doing this until the API service starts.
 
 ## Migrating Deployment Databases
 
@@ -34,7 +32,7 @@ Option 2: You can set up a CI task for this repo:
 1. Create different configuration files for each deployed environment. For example, `migrator.config-staging.js` for the "staging" environment.
 2. Add the necessary `MONGO_URL`s to your CI environment/secrets.
 3. When config file changes are merged to the main branch, run `npx migrator migrate <env> -y` as a CI task with `MONGO_URL` set to the correct database for that environment. Do this for each Reaction environment (database) you have.
-    - Ensure that your CI Docker image uses at least the version of Node that's in the `.nvmrc` file.
+    - Ensure that your CI Docker image uses the version(s) of Node specified in the package manifest `engines` property.
 
 ## Why does this repo exist?
 
