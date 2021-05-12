@@ -5,6 +5,9 @@
   "description": "Tracks migration state for all Reaction Platform services",
   "author": "Reaction Commerce <hello@reactioncommerce.com>",
   "license": "Apache-2.0",
+  "engines": {
+    "node": "12.14.1"
+  },
   "scripts": {
     "lint": "eslint ."
   },
