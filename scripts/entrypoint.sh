@@ -26,10 +26,9 @@ IFS=$'\n\t'
 
 # "${scripts_dir}/fix-volumes.sh" "${run_user}"
 
-# run_user="node"
+run_user="node"
 command=(npx migrator migrate -y)
 
 unset IFS
-# exec su-exec "${run_user}" "${command[@]}"
-exec su-exec node "${command[@]}"
+exec su-exec "${run_user}" "${command[@]}"
 exit
