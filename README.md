@@ -6,7 +6,7 @@ This repo was created by following [these instructions](https://github.com/react
 
 ## Prerequisites
 
-You must either have NodeJS 12.14.1 installed globally, or have [nvm](https://github.com/nvm-sh/nvm) installed and run `nvm use` as described in the instructions.
+You must either have NodeJS 14.17.4 installed globally, or have [nvm](https://github.com/nvm-sh/nvm) installed and run `nvm use` as described in the instructions.
 
 ## Local Development Usage
 
