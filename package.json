@@ -1,6 +1,6 @@
 {
   "name": "reaction-api-migrations",
-  "version": "0.0.0",
+  "version": "3.11.0",
   "type": "module",
   "description": "Tracks migration state for all Reaction Platform services",
   "author": "Reaction Commerce <hello@reactioncommerce.com>",
