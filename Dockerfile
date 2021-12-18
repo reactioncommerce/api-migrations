@@ -1,5 +1,5 @@
 # Largely based on https://github.com/reactioncommerce/docker-base/blob/trunk/images/node-dev/12.14.1-v3/Dockerfile 
-FROM node:12.14.1-alpine
+FROM node:14.17.4-alpine
 
 # hadolint ignore=DL3018
 RUN apk --no-cache --update add bash curl less shadow su-exec tini vim python2 make git
@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-u", "-c"]
 RUN mkdir -p /usr/local/src/app && chown node:node /usr/local/src/app
 
 # Install latest NPM
-RUN npm install -g npm@latest
+# RUN npm install -g npm@latest
 
 WORKDIR /usr/local/src/app
 
