@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reactioncommerce-api-migrations-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: migrate
+        image: docker.registry.bugslifesolutions.com/reactioncommerce-api-migrations
+        envFrom:
+          - secretRef:
+              name: reactioncommerce
+      restartPolicy: Never
+  backoffLimit: 4
