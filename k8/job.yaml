@@ -10,6 +10,6 @@ spec:
         image: docker.registry.bugslifesolutions.com/reactioncommerce-api-migrations
         envFrom:
           - secretRef:
-              name: reactioncommerce
+              name: reaction
       restartPolicy: Never
   backoffLimit: 4
