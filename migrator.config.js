@@ -14,6 +14,11 @@ export default {
       namespace: "tags",
       package: "@reactioncommerce/api-plugin-tags",
       version: 2
+    },
+    {
+      namespace: "email",
+      package: "@reactioncommerce/api-plugin-email",
+      version: 2
     }
   ]
 };
