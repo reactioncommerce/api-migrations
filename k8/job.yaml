@@ -13,3 +13,4 @@ spec:
               name: reaction
       restartPolicy: Never
   backoffLimit: 4
+  suspend: true
