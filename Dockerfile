@@ -1,5 +1,5 @@
 # Largely based on https://github.com/reactioncommerce/docker-base/blob/trunk/images/node-dev/12.14.1-v3/Dockerfile 
-FROM node:14.17.4-alpine
+FROM node:14.20.1-alpine
 
 # hadolint ignore=DL3018
 RUN apk --no-cache --update add bash curl less shadow su-exec tini vim python2 make git
