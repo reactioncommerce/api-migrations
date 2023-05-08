@@ -1,6 +1,6 @@
 {
   "name": "reaction-api-migrations",
-  "version": "0.0.0",
+  "version": "3.11.0",
   "type": "module",
   "description": "Tracks migration state for all Reaction Platform services",
   "author": "Reaction Commerce <hello@reactioncommerce.com>",
@@ -11,6 +11,7 @@
   "dependencies": {
     "@reactioncommerce/api-plugin-accounts": "^1.6.0",
     "@reactioncommerce/api-plugin-authorization-simple": "^1.3.1",
+    "@reactioncommerce/api-plugin-email": "^1.1.2",
     "@reactioncommerce/api-plugin-tags": "^1.1.5",
     "@reactioncommerce/migrator": "^1.1.1",
     "graphql": "^15.3.0",
