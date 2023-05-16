@@ -15,10 +15,8 @@ WORKDIR /usr/local/src/app
 
 COPY --chown=node:node ./ /usr/local/src/app
 
-RUN npm install
+RUN npm install && RUN chmod +x /usr/local/src/app/scripts/entrypoint.sh
 
-RUN chmod +x /usr/local/src/app/scripts/entrypoint.sh
-
-USER root
+USER node
 ENTRYPOINT ["tini", "--", "/usr/local/src/app/scripts/entrypoint.sh"]
 LABEL com.reactioncommerce.name="reaction-api-migrations"
