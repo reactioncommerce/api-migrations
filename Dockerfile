@@ -2,7 +2,7 @@
 FROM node:14.20.1-alpine
 
 # hadolint ignore=DL3018
-RUN apk --no-cache --update add bash curl less shadow su-exec tini vim python2 make git
+RUN apk --no-cache --update add bash curl less shadow su-exec tini vim make git
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-u", "-c"]
 
 # Allow yarn/npm to create ./node_modules
@@ -21,4 +21,4 @@ RUN chmod +x /usr/local/src/app/scripts/entrypoint.sh
 
 USER root
 ENTRYPOINT ["tini", "--", "/usr/local/src/app/scripts/entrypoint.sh"]
-LABEL com.reactioncommerce.name="reaction-api-migration"
+LABEL com.reactioncommerce.name="reaction-api-migrations"

@@ -5,8 +5,13 @@
   "description": "Tracks migration state for all Reaction Platform services",
   "author": "Reaction Commerce <hello@reactioncommerce.com>",
   "license": "Apache-2.0",
+  "repository": {
+    "url": "https://github.com/bugslifesolutions/api-migrations.git",
+    "type": "git"
+  },
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build:image": "docker build -f ./Dockerfile ."
   },
   "dependencies": {
     "@reactioncommerce/api-plugin-accounts": "^1.6.0",

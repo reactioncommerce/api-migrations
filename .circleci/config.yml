@@ -1,0 +1,118 @@
+version: 2.1
+
+orbs:
+  docker: circleci/docker@2.2.0
+
+# The following stanza defines a map named defaults with a variable that may be
+# inserted using the YAML merge (<<: *) key later in the file to save some
+# typing. See http://yaml.org/type/merge.html for details.
+defaults: &defaults
+  environment:
+    CI_SCRIPTS: "npx --quiet --package @reactioncommerce/ci-scripts@1.6.2"
+    DOCKER_REPOSITORY: "gcr.io/appliance-shack-cluster2/reaction-api-migrations"
+    DOCKER_NAME: "reaction-api-migrations"
+    GLOBAL_CACHE_VERSION: “v3”
+  docker:
+    - image: cimg/node:14.20.1
+
+install_pnpm: &install_pnpm
+  - run:
+      name: Install pnpm package manager
+      command: sudo npm i -g pnpm@7.11.0
+
+pnpm_install: &pnpm_install
+  - run:
+      name: Install PNPM dependencies
+      command: pnpm install -r
+
+jobs:
+  install-dependencies:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - reaction-v7-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}
+            - reaction-v7-node-modules-{{ .Branch }}
+      - <<: *install_pnpm
+      - <<: *pnpm_install
+      - save_cache:
+          key: reaction-v7-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+      - save_cache:
+          key: reaction-v7-node-modules-{{ .Branch }}
+          paths:
+            - node_modules
+
+  dockerfile-lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Lint Dockerfiles
+          command: ${CI_SCRIPTS} lint-dockerfiles
+  release:
+    <<: *defaults
+    steps:
+      - checkout
+      - <<: *install_pnpm
+      - <<: *pnpm_install
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Push the latest version to npm
+          command: pnpm publish -r
+
+  docker-build-push:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Wait for packages to be propagated
+          command: sleep 350
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build production Docker image
+          command: |
+            VERSION=$(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
+            docker build --no-cache -t ${DOCKER_REPOSITORY}:${VERSION} -t ${DOCKER_REPOSITORY}:latest -f ./Dockerfile .
+      - run:
+          name: Login to gcr.io docker registry
+          command: echo ${GCR_JSON_KEY} | docker login -u _json_key --password-stdin https://gcr.io
+      - run:
+          name: Push production Docker image
+          command: |
+            VERSION=$(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
+            docker push ${DOCKER_REPOSITORY}:${VERSION}
+            docker push ${DOCKER_REPOSITORY}:latest
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - install-dependencies
+      - dockerfile-lint:
+          requires:
+            - install-dependencies
+      - release:
+          context: reaction-publish-semantic-release
+          filters:
+            branches:
+              only:
+                - trunk
+          requires:
+            - dockerfile-lint
+      - docker-build-push:
+          context: reaction-publish-docker
+          filters:
+            branches:
+              only:
+                - trunk
+                - main
+          requires:
+            - dockerfile-lint

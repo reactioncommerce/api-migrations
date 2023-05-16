@@ -1,0 +1,47 @@
+# This docker-compose file is used to run the project in Docker.
+# The local files are mounted into the created container.
+#
+# Usage:
+#  ln -s docker-compose.dev.yml docker-compose.override.yml
+#  docker-compose up [-d]
+#
+# To go back to running the published image:
+#  rm docker-compose.override.yml
+
+version: "3.4"
+
+networks:
+  reaction:
+    external:
+      name: reaction.localhost
+
+services:
+  mongo:
+    image: mongo:5.0
+    command: mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger
+    networks:
+      default:
+      reaction:
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-db4:/data/db
+    healthcheck: # re-run rs.initiate() after startup if it failed.
+      test: test $$(echo "rs.status().ok || rs.initiate().ok" | mongo --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+    restart: always
+  
+
+  migration:
+    image: bugslifesolutions2/reaction-api-migrations:latest
+    depends_on: 
+      - mongo
+    env_file:
+      - ./.env
+    networks: 
+      default:
+      reaction:
+
+volumes:
+  mongo-db4:
