@@ -2,7 +2,7 @@
 FROM node:14.20.1-alpine
 
 # hadolint ignore=DL3018
-RUN apk --no-cache --update add bash curl less shadow su-exec tini vim make git
+RUN apk --no-cache --update add bash curl less shadow su-exec tini vim make py3-pip g++ git
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-u", "-c"]
 
 # Allow yarn/npm to create ./node_modules
