@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: migrate
-        image: docker.registry.bugslifesolutions.com/reactioncommerce-api-migrations
+        image: gcr.io/appliance-shack-cluster2/reaction-api-migrations:latest
         envFrom:
           - secretRef:
               name: reaction
