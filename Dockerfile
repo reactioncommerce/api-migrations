@@ -15,7 +15,7 @@ WORKDIR /usr/local/src/app
 
 COPY --chown=node:node ./ /usr/local/src/app
 
-RUN npm install && RUN chmod +x /usr/local/src/app/scripts/entrypoint.sh
+RUN npm install && chmod +x /usr/local/src/app/scripts/entrypoint.sh
 
 USER node
 ENTRYPOINT ["tini", "--", "/usr/local/src/app/scripts/entrypoint.sh"]
