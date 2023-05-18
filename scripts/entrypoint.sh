@@ -30,5 +30,5 @@ run_user="node"
 command=(npx migrator migrate -y)
 
 unset IFS
-exec su-exec "${run_user}" "${command[@]}"
+exec "${command[@]}"
 exit
