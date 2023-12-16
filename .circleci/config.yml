@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  docker: circleci/docker@2.2.0
-
 # The following stanza defines a map named defaults with a variable that may be
 # inserted using the YAML merge (<<: *) key later in the file to save some
 # typing. See http://yaml.org/type/merge.html for details.
@@ -13,7 +10,7 @@ defaults: &defaults
     DOCKER_NAME: "reaction-api-migrations"
     GLOBAL_CACHE_VERSION: “v3”
   docker:
-    - image: cimg/node:14.20.1
+    - image: cimg/node:18.18.2
 
 install_pnpm: &install_pnpm
   - run:
@@ -73,7 +70,7 @@ jobs:
       - checkout
       - run:
           name: Wait for packages to be propagated
-          command: sleep 350
+          command: sleep 120
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
