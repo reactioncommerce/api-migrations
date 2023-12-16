@@ -18,7 +18,7 @@ defaults: &defaults
 install_pnpm: &install_pnpm
   - run:
       name: Install pnpm package manager
-      command: sudo npm i -g pnpm@7.11.0
+      command: sudo npm i -g pnpm@8.11.0
 
 pnpm_install: &pnpm_install
   - run:
