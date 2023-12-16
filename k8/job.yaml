@@ -8,9 +8,17 @@ spec:
       containers:
       - name: migrate
         image: gcr.io/appliance-shack-cluster2/reaction-api-migrations:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop: ["ALL"]
         envFrom:
           - secretRef:
               name: reaction
       restartPolicy: Never
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
   backoffLimit: 4
   suspend: true
