@@ -29,16 +29,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - reaction-v7-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}
-            - reaction-v7-node-modules-{{ .Branch }}
+            - reaction-v8-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}
+            - reaction-v8-node-modules-{{ .Branch }}
       - <<: *install_pnpm
       - <<: *pnpm_install
       - save_cache:
-          key: reaction-v7-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}
+          key: reaction-v8-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}
           paths:
             - node_modules
       - save_cache:
-          key: reaction-v7-node-modules-{{ .Branch }}
+          key: reaction-v8-node-modules-{{ .Branch }}
           paths:
             - node_modules
 
