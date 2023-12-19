@@ -30,15 +30,10 @@ jobs:
       - restore_cache:
           keys:
             - reaction-v8-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}-{{ checksum ".nvmrc" }}
-            - reaction-v8-node-modules-{{ .Branch }}
       - <<: *install_pnpm
       - <<: *pnpm_install
       - save_cache:
           key: reaction-v8-node-modules-{{ checksum "package.json" }}-{{ checksum "pnpm-lock.yaml" }}-{{ checksum ".nvmrc" }}
-          paths:
-            - node_modules
-      - save_cache:
-          key: reaction-v8-node-modules-{{ .Branch }}
           paths:
             - node_modules
 
