@@ -77,7 +77,7 @@ jobs:
           name: Build production Docker image
           command: |
             VERSION=$(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
-            docker build --no-cache -t ${DOCKER_REPOSITORY}:${VERSION} -t ${DOCKER_REPOSITORY}:latest -f ./Dockerfile .
+            docker build --progress plain --no-cache -t ${DOCKER_REPOSITORY}:${VERSION} -t ${DOCKER_REPOSITORY}:latest -f ./Dockerfile .
       - run:
           name: Login to gcr.io docker registry
           command: echo ${GCR_JSON_KEY} | docker login -u _json_key --password-stdin https://gcr.io

@@ -21,14 +21,14 @@ export default {
       version: 2
     },
     {
-      namesapce: "promotion-coupons",
-      package: "@bugslifesolutions/api-plugin-promotions-coupons",
-      version: 2
-    },
-    {
-      namesapce: "nodemailer",
+      namespace: "nodemailer",
       package: "@bugslifesolutions/bl-api-plugin-nodemailer",
       version: 1
+    },
+    {
+      namespace: "promotion-coupons",
+      package: "@bugslifesolutions/api-plugin-promotions-coupons",
+      version: 2
     }
   ]
 };
