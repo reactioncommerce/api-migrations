@@ -29,6 +29,11 @@ export default {
       namespace: "promotion-coupons",
       package: "@bugslifesolutions/api-plugin-promotions-coupons",
       version: 2
+    },
+    {
+      namespace: "fulfillment",
+      package: "@bugslifesolutions/api-plugin-fulfillment",
+      version: 2
     }
   ]
 };
