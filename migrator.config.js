@@ -23,7 +23,7 @@ export default {
     {
       namespace: "nodemailer",
       package: "@bugslifesolutions/bl-api-plugin-nodemailer",
-      version: 1
+      version: 2
     },
     {
       namespace: "promotion-coupons",
@@ -33,6 +33,11 @@ export default {
     {
       namespace: "fulfillment",
       package: "@bugslifesolutions/api-plugin-fulfillment",
+      version: 2
+    },
+    {
+      namespace: "simpleSchema",
+      package: "@bugslifesolutions/api-plugin-simple-schema",
       version: 2
     }
   ]
