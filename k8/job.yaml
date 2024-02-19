@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reactioncommerce-api-migrations-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: migrate
+        image: gcr.io/appliance-shack-cluster2/reaction-api-migrations:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop: ["ALL"]
+        envFrom:
+          - secretRef:
+              name: reaction
+      restartPolicy: Never
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+  backoffLimit: 4
+  suspend: true

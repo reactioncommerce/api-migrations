@@ -6,7 +6,7 @@ This repo was created by following [these instructions](https://github.com/react
 
 ## Prerequisites
 
-You must have NodeJS 14.17.4 installed globally.
+You must have NodeJS installed globally.
 
 ## Local Development Usage
 
